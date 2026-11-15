@@ -6,6 +6,7 @@ A modular, data-oriented game engine written in Rust.
 
 - engine-core: monotonic frame timing, fixed/variable update orchestration, bounded catch-up, cross-thread events, and structured tracing.
 - engine-input: keyboard, mouse, cursor, wheel, and action/axis mapping over winit.
+- engine-math: glam-based AABB construction, containment, intersection, and union with unit tests.
 - engine-renderer: wgpu 30 surface backend, resize handling, and a clear pass.
 - sandbox: native winit application wiring the systems together.
 
@@ -49,7 +50,7 @@ cargo run --bin sandbox
 Development checks:
 
 ~~~bash
-cargo fmt --all -- --check
+cargo fmt --all
 cargo test --workspace --all-targets
 cargo clippy --workspace --all-targets
 ~~~
