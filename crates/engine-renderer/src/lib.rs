@@ -120,6 +120,8 @@ pub enum FrameStatus {
 /// }
 /// ~~~
 pub struct Renderer {
+    instance: wgpu::Instance,
+    window: Arc<Window>,
     surface: wgpu::Surface<'static>,
     device: wgpu::Device,
     queue: wgpu::Queue,
@@ -142,7 +144,7 @@ impl Renderer {
     pub async fn new(window: Arc<Window>) -> Result<Self, RendererError> {
         let size = window.inner_size();
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-        let surface = instance.create_surface(window)?;
+        let surface = instance.create_surface(window.clone())?;
         let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
             power_preference: wgpu::PowerPreference::HighPerformance,
             compatible_surface: Some(&surface),
@@ -163,7 +165,7 @@ impl Renderer {
             .ok_or(RendererError::UnsupportedSurface)?;
         surface.configure(&device, &config);
         Ok(Self {
-            surface, device, queue, config,
+            instance, window, surface, device, queue, config,
             adapter_name: format!("{} ({:?})", info.name, info.backend),
         })
     }
@@ -206,9 +208,16 @@ impl Renderer {
         let (frame, suboptimal) = match self.surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
-            wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
-                warn!("surface outdated/lost; reconfiguring");
+            wgpu::CurrentSurfaceTexture::Outdated => {
+                warn!("surface configuration outdated; reconfiguring");
                 self.surface.configure(&self.device, &self.config);
+                return Ok(FrameStatus::Reconfigured);
+            }
+            wgpu::CurrentSurfaceTexture::Lost => {
+                warn!("surface lost; recreating from the retained window handle");
+                let surface = self.instance.create_surface(self.window.clone())?;
+                surface.configure(&self.device, &self.config);
+                self.surface = surface;
                 return Ok(FrameStatus::Reconfigured);
             }
             wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => {
