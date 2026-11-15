@@ -78,3 +78,24 @@ pub enum EngineConfigError {
     #[error("max_fixed_updates_per_frame must be greater than zero")]
     ZeroMaxFixedUpdates,
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rejects_zero_fixed_rate() {
+        let config = EngineConfig { fixed_update_hz: 0, ..EngineConfig::default() };
+        assert_eq!(config.validate(), Err(EngineConfigError::ZeroFixedUpdateRate));
+    }
+
+    #[test]
+    fn rejects_rates_beyond_nanosecond_precision() {
+        let config = EngineConfig {
+            fixed_update_hz: u32::MAX,
+            ..EngineConfig::default()
+        };
+        assert_eq!(config.validate(), Err(EngineConfigError::FixedUpdateRateTooHigh));
+    }
+}
