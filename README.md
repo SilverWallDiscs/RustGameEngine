@@ -4,7 +4,7 @@ A modular, data-oriented game engine written in Rust.
 
 ## Phase 1 foundation
 
-- engine-core: monotonic frame timing, fixed/variable update orchestration, bounded catch-up, cross-thread events, and structured tracing.
+- engine-core: monotonic frame timing, fixed/variable update orchestration, bounded catch-up, cross-thread events, structured tracing, and Serde-ready configuration.
 - engine-input: keyboard, mouse, cursor, wheel, and action/axis mapping over winit.
 - engine-math: glam-based AABB construction, containment, intersection, and union with unit tests.
 - engine-renderer: wgpu 30 surface backend, resize handling, and a clear pass.
