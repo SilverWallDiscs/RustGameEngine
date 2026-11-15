@@ -43,6 +43,9 @@ impl EngineConfig {
     /// ~~~
     pub fn validate(&self) -> Result<(), EngineConfigError> {
         if self.fixed_update_hz == 0 { return Err(EngineConfigError::ZeroFixedUpdateRate); }
+        if self.fixed_update_hz > 1_000_000_000 {
+            return Err(EngineConfigError::FixedUpdateRateTooHigh);
+        }
         if self.max_frame_delta.is_zero() { return Err(EngineConfigError::ZeroMaxFrameDelta); }
         if self.max_fixed_updates_per_frame == 0 {
             return Err(EngineConfigError::ZeroMaxFixedUpdates);
@@ -65,6 +68,9 @@ pub enum EngineConfigError {
     /// Fixed simulation rate must be positive.
     #[error("fixed_update_hz must be greater than zero")]
     ZeroFixedUpdateRate,
+    /// Fixed update rate exceeds nanosecond timer resolution.
+    #[error("fixed_update_hz must not exceed 1,000,000,000")]
+    FixedUpdateRateTooHigh,
     /// Frame-delta clamp must be positive.
     #[error("max_frame_delta must be greater than zero")]
     ZeroMaxFrameDelta,
