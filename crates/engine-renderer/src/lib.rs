@@ -10,9 +10,9 @@
 //! ~~~rust,no_run
 //! use std::sync::Arc;
 //! use engine_renderer::Renderer;
-//! use winit::window::Window;
-//! async fn init(window: Arc<Window>) {
-//!     let renderer = Renderer::new(window).await.unwrap();
+//! use winit::{event_loop::OwnedDisplayHandle, window::Window};
+//! async fn init(window: Arc<Window>, display: OwnedDisplayHandle) {
+//!     let renderer = Renderer::new(window, display).await.unwrap();
 //!     println!("{}", renderer.adapter_name());
 //! }
 //! ~~~
@@ -20,7 +20,7 @@
 use std::sync::Arc;
 use thiserror::Error;
 use tracing::{debug, info, warn};
-use winit::window::Window;
+use winit::{event_loop::OwnedDisplayHandle, window::Window};
 
 /// Linear RGBA clear color.
 ///
@@ -141,9 +141,13 @@ impl Renderer {
     ///     let _renderer = Renderer::new(window).await.unwrap();
     /// }
     /// ~~~
-    pub async fn new(window: Arc<Window>) -> Result<Self, RendererError> {
+    pub async fn new(
+        window: Arc<Window>,
+        display: OwnedDisplayHandle,
+    ) -> Result<Self, RendererError> {
         let size = window.inner_size();
-        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
+        let descriptor = wgpu::InstanceDescriptor::new_with_display_handle(Box::new(display));
+        let instance = wgpu::Instance::new(descriptor);
         let surface = instance.create_surface(window.clone())?;
         let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
             power_preference: wgpu::PowerPreference::HighPerformance,
@@ -157,8 +161,9 @@ impl Renderer {
             label: Some("Rust Game Engine device"),
             required_features: wgpu::Features::empty(),
             required_limits: wgpu::Limits::default(),
+            experimental_features: wgpu::ExperimentalFeatures::disabled(),
             memory_hints: wgpu::MemoryHints::Performance,
-            ..Default::default()
+            trace: wgpu::Trace::Off,
         }).await?;
 
         let config = surface.get_default_config(&adapter, size.width.max(1), size.height.max(1))
@@ -178,8 +183,8 @@ impl Renderer {
     /// # use std::sync::Arc;
     /// # use engine_renderer::Renderer;
     /// # use winit::window::Window;
-    /// # async fn example(window: Arc<Window>) {
-    /// let mut renderer = Renderer::new(window).await.unwrap();
+    /// # async fn example(window: Arc<Window>, display: OwnedDisplayHandle) {
+    /// let mut renderer = Renderer::new(window, display).await.unwrap();
     /// renderer.resize(1280, 720);
     /// # }
     /// ~~~
@@ -198,7 +203,7 @@ impl Renderer {
     /// ~~~rust,no_run
     /// # use std::sync::Arc;
     /// # use engine_renderer::{ClearColor, Renderer};
-    /// # use winit::window::Window;
+    /// # use winit::{event_loop::OwnedDisplayHandle, window::Window};
     /// # async fn example(window: Arc<Window>) {
     /// let mut renderer = Renderer::new(window).await.unwrap();
     /// let _status = renderer.render(ClearColor::default());
@@ -269,8 +274,8 @@ impl Renderer {
     /// # use std::sync::Arc;
     /// # use engine_renderer::Renderer;
     /// # use winit::window::Window;
-    /// # async fn example(window: Arc<Window>) {
-    /// let renderer = Renderer::new(window).await.unwrap();
+    /// # async fn example(window: Arc<Window>, display: OwnedDisplayHandle) {
+    /// let renderer = Renderer::new(window, display).await.unwrap();
     /// println!("{}", renderer.adapter_name());
     /// # }
     /// ~~~
