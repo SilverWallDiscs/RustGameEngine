@@ -1,6 +1,7 @@
 //! Runtime configuration and validation.
 
 use std::time::Duration;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Configuration for the frame and simulation loops.
@@ -15,7 +16,8 @@ use thiserror::Error;
 ///     max_fixed_updates_per_frame: 12 };
 /// assert!(config.validate().is_ok());
 /// ~~~
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
 pub struct EngineConfig {
     /// Deterministic simulation updates per second.
     pub fixed_update_hz: u32,
@@ -97,5 +99,32 @@ mod tests {
             ..EngineConfig::default()
         };
         assert_eq!(config.validate(), Err(EngineConfigError::FixedUpdateRateTooHigh));
+    }
+}
+
+
+#[cfg(test)]
+mod serialization_tests {
+    use super::*;
+
+    #[test]
+    fn engine_config_round_trips_through_json() {
+        let original = EngineConfig {
+            fixed_update_hz: 120,
+            max_frame_delta: Duration::from_millis(200),
+            max_fixed_updates_per_frame: 10,
+        };
+        let encoded = serde_json::to_string(&original).unwrap();
+        let decoded: EngineConfig = serde_json::from_str(&encoded).unwrap();
+        assert_eq!(decoded, original);
+    }
+
+    #[test]
+    fn omitted_config_fields_use_engine_defaults() {
+        let decoded: EngineConfig =
+            serde_json::from_str(r#"{"fixed_update_hz":120}"#).unwrap();
+        assert_eq!(decoded.fixed_update_hz, 120);
+        assert_eq!(decoded.max_frame_delta, Duration::from_millis(250));
+        assert_eq!(decoded.max_fixed_updates_per_frame, 8);
     }
 }
