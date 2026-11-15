@@ -58,7 +58,7 @@ impl InputState {
         match event {
             WindowEvent::Focused(focused) => {
                 self.focused = *focused;
-                if !focused { self.release_all(); }
+                if !*focused { self.release_all(); }
             }
             WindowEvent::KeyboardInput { event, .. } => {
                 if let PhysicalKey::Code(key) = event.physical_key {
