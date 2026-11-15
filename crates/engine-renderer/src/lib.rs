@@ -113,9 +113,9 @@ pub enum FrameStatus {
 /// ~~~rust,no_run
 /// use std::sync::Arc;
 /// use engine_renderer::Renderer;
-/// use winit::window::Window;
-/// async fn create(window: Arc<Window>) {
-///     let renderer = Renderer::new(window).await.unwrap();
+/// use winit::{event_loop::OwnedDisplayHandle, window::Window};
+/// async fn create(window: Arc<Window>, display: OwnedDisplayHandle) {
+///     let renderer = Renderer::new(window, display).await.unwrap();
 ///     println!("GPU: {}", renderer.adapter_name());
 /// }
 /// ~~~
@@ -136,9 +136,9 @@ impl Renderer {
     /// ~~~rust,no_run
     /// use std::sync::Arc;
     /// use engine_renderer::Renderer;
-    /// use winit::window::Window;
-    /// async fn init(window: Arc<Window>) {
-    ///     let _renderer = Renderer::new(window).await.unwrap();
+    /// use winit::{event_loop::OwnedDisplayHandle, window::Window};
+    /// async fn init(window: Arc<Window>, display: OwnedDisplayHandle) {
+    ///     let _renderer = Renderer::new(window, display).await.unwrap();
     /// }
     /// ~~~
     pub async fn new(
@@ -204,8 +204,8 @@ impl Renderer {
     /// # use std::sync::Arc;
     /// # use engine_renderer::{ClearColor, Renderer};
     /// # use winit::{event_loop::OwnedDisplayHandle, window::Window};
-    /// # async fn example(window: Arc<Window>) {
-    /// let mut renderer = Renderer::new(window).await.unwrap();
+    /// # async fn example(window: Arc<Window>, display: OwnedDisplayHandle) {
+    /// let mut renderer = Renderer::new(window, display).await.unwrap();
     /// let _status = renderer.render(ClearColor::default());
     /// # }
     /// ~~~
@@ -288,9 +288,9 @@ impl Renderer {
     /// ~~~rust,no_run
     /// # use std::sync::Arc;
     /// # use engine_renderer::Renderer;
-    /// # use winit::window::Window;
-    /// # async fn example(window: Arc<Window>) {
-    /// let renderer = Renderer::new(window).await.unwrap();
+    /// # use winit::{event_loop::OwnedDisplayHandle, window::Window};
+    /// # async fn example(window: Arc<Window>, display: OwnedDisplayHandle) {
+    /// let renderer = Renderer::new(window, display).await.unwrap();
     /// let _format = renderer.surface_format();
     /// # }
     /// ~~~
