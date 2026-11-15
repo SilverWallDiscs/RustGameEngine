@@ -339,3 +339,26 @@ impl ActionMap {
         }
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unbound_actions_and_axes_are_neutral() {
+        let input = InputState::default();
+        let map = ActionMap::default();
+        assert!(!map.action_down("missing", &input));
+        assert!(!map.action_pressed("missing", &input));
+        assert_eq!(map.axis_value("missing", &input), 0.0);
+    }
+
+    #[test]
+    fn binding_an_action_does_not_trigger_without_input() {
+        let input = InputState::default();
+        let mut map = ActionMap::default();
+        map.bind_key("jump", KeyCode::Space);
+        assert!(!map.action_down("jump", &input));
+    }
+}
