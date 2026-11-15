@@ -1,0 +1,16 @@
+[package]
+name = "sandbox"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[lints]
+workspace = true
+[dependencies]
+anyhow.workspace = true
+engine-core = { path = "../../crates/engine-core" }
+engine-input = { path = "../../crates/engine-input" }
+engine-renderer = { path = "../../crates/engine-renderer" }
+pollster.workspace = true
+tracing.workspace = true
+winit.workspace = true

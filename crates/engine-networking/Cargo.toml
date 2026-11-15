@@ -1,0 +1,12 @@
+[package]
+name = "engine-networking"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[lints]
+workspace = true
+[dependencies]
+crossbeam-channel.workspace = true
+engine-core = { path = "../engine-core" }
+thiserror.workspace = true

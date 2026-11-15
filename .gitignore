@@ -1,0 +1,7 @@
+/target
+/dist
+*.log
+*.profraw
+*.trace
+.DS_Store
+Thumbs.db

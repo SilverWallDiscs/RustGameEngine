@@ -1,0 +1,35 @@
+[workspace]
+resolver = "3"
+members = [
+  "crates/engine-core", "crates/engine-math", "crates/engine-memory",
+  "crates/engine-concurrency", "crates/engine-ecs", "crates/engine-renderer",
+  "crates/engine-physics", "crates/engine-audio", "crates/engine-input",
+  "crates/engine-assets", "crates/engine-scripting", "crates/engine-networking",
+  "crates/engine-editor", "apps/sandbox",
+]
+default-members = ["apps/sandbox"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.88"
+authors = ["Rust Game Engine contributors"]
+
+[workspace.dependencies]
+anyhow = "1.0"
+crossbeam-channel = "0.5"
+glam = "0.30"
+parking_lot = "0.12"
+pollster = "0.4"
+rayon = "1.11"
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "2.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+wgpu = "=30.0.2"
+winit = { version = "=0.30.13", features = ["rwh_06"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"

@@ -1,0 +1,11 @@
+[package]
+name = "engine-scripting"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[lints]
+workspace = true
+[dependencies]
+engine-core = { path = "../engine-core" }
+thiserror.workspace = true
