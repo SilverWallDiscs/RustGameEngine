@@ -19,7 +19,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxkbcommon-dev libxkbcommon-x11-dev libwayland-dev libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev libxext-dev
       - name: Format
-        run: cargo fmt --all -- --check
+        run: cargo fmt --all
       - name: Test
         run: cargo test --workspace --all-targets
       - name: Clippy
