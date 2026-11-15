@@ -12,8 +12,14 @@ use crossbeam_channel::{unbounded, Receiver, Sender};
 /// bus.sender().send("asset-ready".to_owned()).unwrap();
 /// assert_eq!(bus.drain().next().as_deref(), Some("asset-ready"));
 /// ~~~
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EventSender<E> { sender: Sender<E> }
+
+impl<E> Clone for EventSender<E> {
+    fn clone(&self) -> Self {
+        Self { sender: self.sender.clone() }
+    }
+}
 
 impl<E: Send + 'static> EventSender<E> {
     /// Sends one event to the bus.
