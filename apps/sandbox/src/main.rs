@@ -49,7 +49,7 @@ impl ApplicationHandler for SandboxApp {
                 return;
             }
         };
-        match pollster::block_on(Renderer::new(window.clone())) {
+        match pollster::block_on(Renderer::new(window.clone(), event_loop.owned_display_handle())) {
             Ok(renderer) => {
                 info!(adapter = renderer.adapter_name(), "sandbox renderer ready");
                 self.renderer = Some(renderer);
